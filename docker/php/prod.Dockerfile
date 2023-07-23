@@ -1,8 +1,8 @@
-FROM php:8.2-fpm-alpine3.18 as php
+FROM node:16-alpine AS node
 
-USER root
+FROM php:8.2-fpm-alpine as php
 
-# Install required extensions for Laravel; other extensions are already installed and present in the php fpm alpine image.
+# Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
 RUN docker-php-ext-install bcmath pdo pdo_mysql
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -14,9 +14,13 @@ RUN mkdir -p /var/www/html
 
 WORKDIR /var/www/html
 
-# Copy only the composer files first to take advantage of Docker caching for faster builds
 COPY . .
 
 RUN composer install --no-interaction --prefer-dist
 
-RUN npm install
+# Copy node binaries by. @todo figure out a better way to handle this in alpine php image that uses alpine linux.
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin

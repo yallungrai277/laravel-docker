@@ -1,5 +1,3 @@
-FROM node:16-alpine AS node
-
 FROM php:8.2-fpm-alpine as php
 
 # Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
@@ -17,10 +15,3 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-interaction --prefer-dist
-
-# Copy node binaries by. @todo figure out a better way to handle this in alpine php image that uses alpine linux.
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/share /usr/local/share
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
