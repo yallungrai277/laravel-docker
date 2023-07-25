@@ -1,7 +1,8 @@
 FROM php:8.2-fpm-alpine as php
 
 # Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
-RUN docker-php-ext-install bcmath pdo pdo_mysql
+# pcntl required for laravel/horizon
+RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -15,3 +16,5 @@ WORKDIR /var/www/html
 COPY . .
 
 RUN composer install --no-interaction --prefer-dist
+
+CMD ["php-fpm", "-F"]
