@@ -1,6 +1,9 @@
-FROM node:16-alpine AS node
+ARG NODE_IMAGE
+ARG PHP_IMAGE
 
-FROM php:8.2-fpm-alpine as php
+FROM ${NODE_IMAGE} AS node
+
+FROM ${PHP_IMAGE} as php
 
 # Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
 RUN docker-php-ext-install bcmath pdo pdo_mysql
@@ -24,3 +27,7 @@ COPY --from=node /usr/local/share /usr/local/share
 COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
+
+# Add a command here that runs npm run production.
+
+CMD ["php-fpm", "-F"]

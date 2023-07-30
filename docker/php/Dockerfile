@@ -1,4 +1,6 @@
-FROM php:8.2-fpm-alpine as php
+ARG PHP_IMAGE
+
+FROM ${PHP_IMAGE} as php
 
 # Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
 # pcntl required for laravel/horizon

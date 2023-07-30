@@ -1,4 +1,6 @@
-FROM nginx:stable-alpine3.17-slim
+ARG NGINX_IMAGE
+
+FROM ${NGINX_IMAGE}
 
 
 # Add additional commands in the future like adding user groups etc.
