@@ -60,18 +60,20 @@ services:
             - MARIADB_ROOT_PASSWORD=root
         volumes:
             - 'mariadbdata:/var/lib/mysql'
+            # Required for creating testing database.
+            - './docker/mysql/init:/docker-entrypoint-initdb.d'
         networks:
             - dockerize-laravel
 
     node:
-        image: *node # Todo set to global environment variables with extension fields, anchors
+        image: *node
         container_name: ${APP_NAME}_node
         ports:
             - 5173:5173
         working_dir: /var/www/html
         volumes:
             - './:/var/www/html'
-        command: ["sh", "-c", "npm install && npm run dev"]
+        command: ["/bin/sh", "-c", "npm install && npm run dev"]
         networks:
             - dockerize-laravel
         restart: unless-stopped
