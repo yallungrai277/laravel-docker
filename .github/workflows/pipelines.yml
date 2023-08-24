@@ -1,12 +1,10 @@
-name: Pipelines
-
 on:
   push:
     branches:
       - master
 
 jobs:
-  build:
+  build_and_prepare_docker_containers:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +17,8 @@ jobs:
       - name: Run docker containers
         run: docker compose up -d
 
+  run_tests:
+    steps:
       - name: List contents
         run: docker exec -i dockerize-laravel_app ls -la /var/www/html
 
