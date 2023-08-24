@@ -20,4 +20,4 @@ jobs:
         run: docker compose up -d
 
       - name: Run test inside container
-        run: docker exec -it dockerize-laravel_app php artisan test
+        run: docker exec -i dockerize-laravel_app php artisan test
