@@ -1,16 +1,17 @@
-name: Docker Image CI
+name: Pipelines
 
 on:
   push:
-    branches: ["master"]
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
       - name: Check out code
+        uses: actions/checkout@v2
 
       - name: List current directory
-      - run: ls -la
+        run: ls -la
