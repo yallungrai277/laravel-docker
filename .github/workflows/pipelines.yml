@@ -19,8 +19,11 @@ jobs:
       - name: Run docker containers
         run: docker compose up -d
 
-      - name: List Laravel Project Directory
-        run: docker exec -i dockerize-laravel_app ls -l /var/www/html
+      - name: Composer install
+        run: docker exec -i dockerize-laravel_app composer install
 
       - name: Run test inside container
         run: docker exec -i dockerize-laravel_app php artisan test
+
+      - name: Build assets
+        run: docker exec -i dockerize-laravel_node npm run build
