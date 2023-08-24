@@ -28,7 +28,7 @@ services:
         depends_on:
             - mysql
             - app
-            - node
+            - npm
             - redis
 
     app:
@@ -44,7 +44,7 @@ services:
             - dockerize-laravel
         depends_on:
             - mysql
-            - node
+            - npm
             - redis
 
     mysql:
