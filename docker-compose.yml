@@ -65,9 +65,9 @@ services:
         networks:
             - dockerize-laravel
 
-    node:
+    npm:
         image: *node
-        container_name: ${APP_NAME}_node
+        container_name: ${APP_NAME}_npm
         ports:
             - 5173:5173
         working_dir: /var/www/html
