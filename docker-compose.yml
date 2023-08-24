@@ -28,7 +28,7 @@ services:
         depends_on:
             - mysql
             - app
-            - npm
+            - node
             - redis
 
     app:
@@ -44,7 +44,7 @@ services:
             - dockerize-laravel
         depends_on:
             - mysql
-            - npm
+            - node
             - redis
 
     mysql:
@@ -65,9 +65,9 @@ services:
         networks:
             - dockerize-laravel
 
-    npm:
+    node:
         image: *node
-        container_name: ${APP_NAME}_npm
+        container_name: ${APP_NAME}_node
         ports:
             - 5173:5173
         working_dir: /var/www/html
