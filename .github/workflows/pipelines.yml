@@ -18,6 +18,8 @@ jobs:
         run: docker compose up -d
 
   run_tests:
+    runs-on: ubuntu-latest
+
     steps:
       - name: List contents
         run: docker exec -i dockerize-laravel_app ls -la /var/www/html
