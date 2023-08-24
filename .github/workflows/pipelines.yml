@@ -4,9 +4,8 @@ on:
       - master
 
 jobs:
-  build_and_prepare_docker_containers:
+  build_and_test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -26,9 +25,9 @@ jobs:
       - name: Build assets
         run: docker exec -i dockerize-laravel_node npm run build
 
-  Publish to docker hub:
+  publish_to_docker_hub:
     runs-on: ubuntu-latest
-
+    needs: build_and_test
     steps:
       - name: List contents
         run: ls -la
