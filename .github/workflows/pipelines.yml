@@ -20,7 +20,7 @@ jobs:
         run: docker compose up -d
 
       - name: List Laravel Project Directory
-        run: docker exec -it dockerize-laravel_app ls -l /var/www/html
+        run: docker exec -i dockerize-laravel_app ls -l /var/www/html
 
       - name: Run test inside container
         run: docker exec -i dockerize-laravel_app php artisan test
