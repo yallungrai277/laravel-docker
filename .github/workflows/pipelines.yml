@@ -19,6 +19,9 @@ jobs:
       - name: Run docker containers
         run: docker compose up -d
 
+      - name: List contents
+        run: docker exec -i dockerize-laravel_app ls -la /var/www/html
+
       - name: Composer install
         run: docker exec -i dockerize-laravel_app composer install
 
