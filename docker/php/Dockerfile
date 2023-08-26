@@ -30,8 +30,6 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist
-
 # launch PHP-FPM with the specified configuration file, and it will restart gracefully
 # when the container receives a stop signal.
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]

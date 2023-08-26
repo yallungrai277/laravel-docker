@@ -106,6 +106,6 @@ return [
     |
     */
     // @todo Add better unique prefixes.
-    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_' . Str::slug(env('APP_ENV'))),
+    'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'.Str::slug(env('APP_ENV'))),
 
 ];

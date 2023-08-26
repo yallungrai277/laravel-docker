@@ -57,7 +57,7 @@ return [
     // @todo Add better unique prefixes.
     'prefix' => env(
         'HORIZON_PREFIX',
-        Str::slug(env('APP_NAME', 'laravel'), '_') . '_horizon_' . Str::slug(env('APP_ENV')) . ':'
+        Str::slug(env('APP_NAME', 'laravel'), '_').'_horizon_'.Str::slug(env('APP_ENV')).':'
     ),
 
     /*
