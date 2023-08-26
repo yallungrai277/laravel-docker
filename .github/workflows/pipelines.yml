@@ -20,16 +20,16 @@ jobs:
         run: docker compose up -d
 
       - name: Composer install
-        run: docker exec -i ${{ env.APP_NAME }}_app composer install --require-dev
+        run: docker exec -i ${{ env.APP_NAME }}_app composer install
 
       - name: Check coding standards
         run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
 
-      - name: Run test inside container
-        run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
-
       - name: Build assets
         run: docker exec -i ${{ env.APP_NAME }}_node npm run build
+
+      - name: Run backend tests
+        run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
 
   publish_to_docker_hub:
     runs-on: ubuntu-latest
