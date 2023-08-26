@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class CacheTest extends TestCase
 {

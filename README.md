@@ -67,3 +67,9 @@ In order to process queues [`laravel horizon`](https://laravel.com/docs/10.x/hor
 2. Feature test
 
 > docker exec -it dockerize-laravel_app php artisan test --testsuite=Feature
+
+## Coding standards
+
+Run the following command to automatically fix code based on `laravel pint`.
+
+> docker exec -it dockerize-laravel_app ./vendor/bin/pint
