@@ -17,18 +17,12 @@ jobs:
         run: ln -fs .env.example .env
 
       - name: Run docker containers
-        run: docker compose up -d
-
-      - name: Composer install
-        run: docker exec -i ${{ env.APP_NAME }}_app composer install
+        run: docker compose -f docker-compose.prod.yml up -d
 
       - name: Check coding standards
         run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
 
-      - name: Build assets
-        run: docker exec -i ${{ env.APP_NAME }}_node npm run build
-
-      - name: Run backend tests
+      - name: Run all tests
         run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
 
   publish_to_docker_hub:
