@@ -47,7 +47,7 @@ COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
 
 # Change the ownership of entire folder to the current user and group.
-RUN chown -R ${USER}:${GROUP} /var/www/html
+RUN chown -R ${USER}:${GROUP} .
 
 # Run a production command for production usage
 RUN npm install && npm run build
