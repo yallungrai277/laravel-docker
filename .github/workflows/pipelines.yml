@@ -13,8 +13,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Symlink env file
-        run: ln -fs .env.example .env
+      - name: Symlink env ci file
+        run: ln -fs .env.ci .env
 
       - name: Run docker containers
         run: docker compose up -d

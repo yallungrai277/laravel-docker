@@ -33,6 +33,9 @@ WORKDIR /var/www/html
 
 COPY . .
 
+# Also set the env to prod.
+RUN cp .env.prod .env
+
 RUN composer install && composer dump-autoload
 
 RUN chmod +x scripts/prepare-storage.sh && ./scripts/prepare-storage.sh

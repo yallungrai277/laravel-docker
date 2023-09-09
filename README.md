@@ -14,7 +14,7 @@ Laravel setup with docker.
 
 ## Installation
 
--   cp .env.example .env (Required for setting app name for docker containers, configure any env variables as you need, any changes in container specific variables may need tweaking in other areas, so best to leave as it is and proceed)
+-   cp .env.local .env (Required for setting app name for docker containers, configure any env variables as you need, any changes in container specific variables may need tweaking in other areas, so best to leave as it is and proceed)
 -   docker compose build --no-cache && docker compose up -d (Build up all containers)
 -   docker exec -it dockerize-laravel_app composer install (Please check your container names depeding on your .env file, it should be APP_NAME_app)
 -   docker exec -it dockerize-laravel_app php artisan migrate
