@@ -14,21 +14,20 @@ services:
     web:
         build:
             context: .
-            dockerfile: ./docker/nginx/Dockerfile.prod
+            dockerfile: ./docker/nginx/Dockerfile
             args:
                 NGINX_IMAGE: *nginx
         container_name: ${APP_NAME}_web
         volumes:
             - './docker/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf'
+            - './:/var/www/html'
         ports:
             - 80:80
             - 443:443
         networks:
             - dockerize-laravel
         depends_on:
-            - mysql
             - app
-            - redis
 
     app:
         build:
@@ -38,6 +37,8 @@ services:
                 PHP_IMAGE: *php
                 NODE_IMAGE: *node
         container_name: ${APP_NAME}_app
+        volumes:
+            - './:/var/www/html'
         networks:
             - dockerize-laravel
         depends_on:
@@ -57,8 +58,6 @@ services:
             - MARIADB_ROOT_PASSWORD=root
         volumes:
             - 'mariadbdata:/var/lib/mysql'
-            # Required for creating testing database.
-            - './docker/mysql/init:/docker-entrypoint-initdb.d'
         networks:
             - dockerize-laravel
 
@@ -70,31 +69,6 @@ services:
         restart: unless-stopped
         volumes:
             - 'redisdata:/data'
-        networks:
-            - dockerize-laravel
-
-    # To do remove after testing
-    mailhog:
-        image: *mailhog
-        container_name: ${APP_NAME}_mail
-        ports:
-            - "${MAIL_PORT}:8025"
-        networks:
-            - dockerize-laravel
-
-    # To do remove after testing
-    pma:
-        image: *pma
-        container_name: ${APP_NAME}_pma
-        depends_on:
-            - mysql
-        ports:
-            - 8080:80
-        environment:
-            - PMA_HOST=mysql
-            - PMA_PORT=3306
-            - PMA_USER=${DB_USERNAME}
-            - PMA_PASSWORD=${DB_PASSWORD}
         networks:
             - dockerize-laravel
 

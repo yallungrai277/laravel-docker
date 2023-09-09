@@ -33,11 +33,12 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install
+RUN composer install && composer dump-autoload
 
+RUN chmod +x scripts/prepare-storage.sh && ./scripts/prepare-storage.sh
+
+# Create symlinks
 RUN php artisan storage:link
-
-# To do run post deploy scripts such as artisan migrate.
 
 # Copy node binaries from the previous node stage.
 COPY --from=node /usr/lib /usr/lib
