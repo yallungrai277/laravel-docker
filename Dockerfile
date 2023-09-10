@@ -1,25 +1,21 @@
-ARG NODE_IMAGE
-ARG PHP_IMAGE
+# Similar to ./docker/php/Dockerfile.prod -> just here for more visibility and needs to be tested on actual setup.
+# Builds a production ready image ready to be used straight away without installing any composer or npm packages. 
+# In future may be extend to have nginx here as well. 
+ARG PHP_IMAGE=php:8.2-fpm-alpine
+ARG NODE_IMAGE=node:16-alpine
 
-FROM ${NODE_IMAGE} AS node
+FROM $NODE_IMAGE as node
+FROM $PHP_IMAGE as php
 
-FROM ${PHP_IMAGE} as php
+LABEL maintainer="Sudip Rai <yallungrai277@gmail.com>"
+LABEL description="Laravel production ready docker image"
 
 ENV USER=laravel
 ENV GROUP=laravel
 
-# Add user by first creating a group, attaching the user to /bin/sh shell with name laravel.
 RUN adduser -g ${GROUP} -s /bin/sh -D ${USER}
 
-# Replace user and group.
-RUN sed -i "s/user = www-data/user = ${USER}/" /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i "s/group = www-data/group = ${GROUP}/" /usr/local/etc/php-fpm.d/www.conf
-# Depending on host machine the group and user for our files and directories
-# can be copied over from our local machine to containers and sometimes causing permission
-# issues hence, we combat this by creating our own group and user.
-
-# Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
-# pcntl required for laravel/horizon
+# Install required plugins
 RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -33,8 +29,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Also set the env to prod, just in case.
-# @todo How to handle this gracefully.
+# Also set the env to prod.
 RUN mv -f .env.prod .env
 
 RUN composer install && composer dump-autoload --optimize
@@ -51,10 +46,8 @@ COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
 
-# Change the ownership of entire folder to the current user and group.
 RUN chown -R ${USER}:${GROUP} .
 
-# Run a production command for production usage
 RUN npm install && npm run build
 
 # launch PHP-FPM with the specified configuration file, and it will restart gracefully
