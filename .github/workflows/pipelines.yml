@@ -14,11 +14,15 @@ jobs:
             - name: Check out code
               uses: actions/checkout@v2
 
-            - name: Symlink env ci file
-              run: ln -fs .env.ci .env
+            - name: Back up .env.prod
+              run: cp .env.prod .env.prod.bak
+
+            - name: Set env ci file
+              run: mv -f .env.ci .env.prod
+              # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env
 
             - name: Run docker containers
-              run: docker compose up -d
+              run: docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d
 
             - name: Composer install
               run: docker exec -i ${{ env.APP_NAME }}_app composer install
@@ -28,6 +32,9 @@ jobs:
 
             - name: Run all php tests
               run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
+
+            - name: Revert back env files
+              run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod && rm .env
 
     publish_to_docker_hub:
         runs-on: ubuntu-latest
