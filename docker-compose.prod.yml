@@ -62,6 +62,8 @@ services:
             - MARIADB_ROOT_PASSWORD=root
         volumes:
             - 'mariadbdata:/var/lib/mysql'
+            # Since, we are using this compose file for ci, we need a testing db, doesn't hurt.
+            - './docker/mysql/init:/docker-entrypoint-initdb.d'
         networks:
             - dockerize-laravel
 

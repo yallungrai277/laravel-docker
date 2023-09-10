@@ -19,7 +19,7 @@ jobs:
 
             - name: Set env ci file
               run: mv -f .env.ci .env.prod
-              # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env
+              # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
 
             - name: Run docker containers
               run: docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d
@@ -35,6 +35,9 @@ jobs:
 
             - name: Revert back env files
               run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod && rm .env
+
+            - name: Shut down containers
+              run: docker compose down
 
     publish_to_docker_hub:
         runs-on: ubuntu-latest
