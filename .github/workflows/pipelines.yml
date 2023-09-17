@@ -81,7 +81,6 @@ jobs:
         needs: [pipelines, publish_to_docker_hub]
         environment: production
         concurrency: production # Only one production job runs at any point of time.
-        cancel-in-progress: true
         steps:
             - name: Echo github context
               run: echo "$GITHUB_CONTEXT"
