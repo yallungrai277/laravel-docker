@@ -2,10 +2,8 @@
 .idea
 node_modules
 vendor
-storage/framework/cache
-storage/framework/sessions
-storage/framework/testing
-storage/framework/views
-storage/app/public
+storage/framework/**
+storage/app/public/**
+storage/logs/**
 .env
 .editorconfig

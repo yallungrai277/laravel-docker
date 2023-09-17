@@ -1,4 +1,4 @@
-# Similar to ./docker/php/Dockerfile.prod -> just here for more visibility and needs to be tested on actual setup.
+# Similar replica to ./docker/php/Dockerfile.prod -> just here for more visibility and needs to be tested on actual setup.
 # Builds a production ready image ready to be used straight away without installing any composer or npm packages. 
 # In future may be extend to have nginx here as well. 
 ARG PHP_IMAGE=php:8.2-fpm-alpine
@@ -14,6 +14,10 @@ ENV USER=laravel
 ENV GROUP=laravel
 
 RUN adduser -g ${GROUP} -s /bin/sh -D ${USER}
+
+# Replace user and group.
+RUN sed -i "s/user = www-data/user = ${USER}/" /usr/local/etc/php-fpm.d/www.conf
+RUN sed -i "s/group = www-data/group = ${GROUP}/" /usr/local/etc/php-fpm.d/www.conf
 
 # Install required plugins
 RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl
