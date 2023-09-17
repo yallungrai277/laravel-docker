@@ -13,7 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Check out code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
 
             - name: Back up .env.prod
               run: cp .env.prod .env.prod.bak
@@ -47,7 +47,7 @@ jobs:
         needs: [pipelines]
         steps:
             - name: Check out code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Login to docker hub
               uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
