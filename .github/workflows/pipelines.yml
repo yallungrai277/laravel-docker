@@ -32,10 +32,6 @@ jobs:
 
             - name: Run docker containers
               run: docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d --build
-              # Todo cache this.
-
-            - name: Composer install
-              run: docker exec -i ${{ env.APP_NAME }}_app composer install
 
             - name: Check coding standards
               run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
