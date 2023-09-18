@@ -1,5 +1,4 @@
-![CI]
-(https://github.com/yallungrai277/laravel-docker/actions/workflows/pipelines.yml/badge.svg)
+![CI](https://github.com/yallungrai277/laravel-docker/actions/workflows/pipelines.yml/badge.svg)
 
 ## Laravel Docker
 
