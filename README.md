@@ -1,3 +1,5 @@
+![CI](https://github.com/github/docs/actions/workflows/pipelines.yml/badge.svg)
+
 ## Laravel Docker
 
 Laravel setup with docker.
