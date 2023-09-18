@@ -23,7 +23,7 @@ jobs:
               # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
 
             - name: Cache Docker Compose
-              uses: actions/cache@v2
+              uses: actions/cache@v3
               with:
                   path: ~/.docker
                   key: docker-compose-${{ hashFiles('docker-compose.prod.yml') }}
