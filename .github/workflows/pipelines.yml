@@ -33,6 +33,9 @@ jobs:
             - name: Run docker containers
               run: docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d --build
 
+            - name: Composer install
+              run: docker exec -i ${{ env.APP_NAME }}_app composer install # Todo remove this (without this fails in CI, so TODO)
+
             - name: Check coding standards
               run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
 
