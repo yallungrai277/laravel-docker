@@ -1,0 +1,10 @@
+ARG APP_IMAGE
+
+FROM ${APP_IMAGE}
+
+WORKDIR /var/www/html
+
+RUN chmod +x scripts/worker.sh
+
+CMD [ "./scripts/worker.sh" ]
+

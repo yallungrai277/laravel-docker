@@ -1,4 +1,4 @@
-version: '3.8'
+version: '2'
 
 # Ensure we use alpine wherever possible
 x-image:
@@ -24,6 +24,7 @@ services:
         # Save the build artifacts of this image so it can be used by nginx for subsequent builds such as accessing static files, codebase etc.
         image: &app_image ${APP_NAME}_app_image
         container_name: ${APP_NAME}_app
+        restart: always
         volumes: *default-volumes
         networks:
             - dockerize-laravel
@@ -39,7 +40,8 @@ services:
                 NGINX_IMAGE: *nginx
                 APP_IMAGE: *app_image
         container_name: ${APP_NAME}_web
-        volumes: *default-volumes            
+        volumes: *default-volumes         
+        restart: always   
         ports:
             - 80:80
             - 443:443
@@ -51,7 +53,7 @@ services:
     mysql:
         image: *mysql
         container_name: ${APP_NAME}_db
-        restart: unless-stopped
+        restart: always
         ports:
             - ${DB_PORT:-3306}:3306
         environment:
@@ -71,9 +73,35 @@ services:
         container_name: ${APP_NAME}_redis
         ports:
             - ${REDIS_PORT:-6379}:6379
-        restart: unless-stopped
+        restart: always
         volumes:
             - 'redisdata:/data'
+        networks:
+            - dockerize-laravel
+    
+    worker:
+        build:
+            context: .
+            dockerfile: ./docker/worker/Dockerfile.prod
+            args:
+                APP_IMAGE: *app_image
+        container_name: ${APP_NAME}_worker
+        restart: always
+        depends_on:
+            - app
+        networks:
+            - dockerize-laravel
+
+    cron:
+        build:
+            context: .
+            dockerfile: ./docker/cron/Dockerfile.prod
+            args:
+                APP_IMAGE: *app_image
+        container_name: ${APP_NAME}_cron
+        restart: always
+        depends_on:
+            - app
         networks:
             - dockerize-laravel
 

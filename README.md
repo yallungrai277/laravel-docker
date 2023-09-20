@@ -97,7 +97,7 @@ docker exec -it dockerize-laravel_app ./vendor/bin/pint
 For production usage and mimicry you can specify .env.prod as the default environment file like done below to bring up the containers, otherwise if present it will take the default .env file, which will cause unexected results. Under the hood, the .env.prod will be renamed as .env by default.
 
 ```
-docker compose -f docker-compose.prod.yml --env-file=.env.prod build && docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d
+docker compose -f docker-compose.prod.yml --env-file .env.prod build && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 ```
 
 Todo: Handle .env.prod file gracefully without setting it up on repository.

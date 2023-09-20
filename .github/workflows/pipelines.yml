@@ -31,7 +31,7 @@ jobs:
                       docker-compose-
 
             - name: Run docker containers
-              run: docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d --build
+              run: docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 
             - name: Composer install
               run: docker exec -i ${{ env.APP_NAME }}_app composer install # Todo remove this (without this fails in CI, so TODO)
@@ -43,7 +43,7 @@ jobs:
               run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
 
             - name: Shut down containers
-              run: docker compose down
+              run: docker compose -f docker-compose.prod.yml --env-file .env.prod down
 
             - name: Revert back env files
               run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod
