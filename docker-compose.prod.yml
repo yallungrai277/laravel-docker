@@ -1,6 +1,6 @@
 version: '3.8'
 
-# Ensure we use alpine wherever possible
+# Ensure we use alpine wherever possible for low space
 x-image:
     - &node node:16-alpine
     - &nginx nginx:stable-alpine3.17-slim
