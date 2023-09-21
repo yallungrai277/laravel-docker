@@ -20,7 +20,10 @@ RUN sed -i "s/user = www-data/user = ${USER}/" /usr/local/etc/php-fpm.d/www.conf
 RUN sed -i "s/group = www-data/group = ${GROUP}/" /usr/local/etc/php-fpm.d/www.conf
 
 # Install required plugins
-RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl
+RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl opcache
+
+# Opcache for performance and caching
+COPY ./docker/php/conf/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

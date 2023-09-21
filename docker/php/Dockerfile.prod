@@ -20,7 +20,10 @@ RUN sed -i "s/group = www-data/group = ${GROUP}/" /usr/local/etc/php-fpm.d/www.c
 
 # Install required extensions for Laravel, other extensions are already installed and present in the php fpm alpine image.
 # pcntl required for laravel/horizon
-RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl
+RUN docker-php-ext-install bcmath pdo pdo_mysql pcntl opcache
+
+# Opcache for performance and caching
+COPY ./docker/php/conf/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
