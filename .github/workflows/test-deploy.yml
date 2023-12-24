@@ -28,5 +28,5 @@ jobs:
             - name: Pull code
               run: |
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
-                  cd ${{ secrets.WORK_DIR }}
+                  cd ~/laravel-docker
                   ls -la
