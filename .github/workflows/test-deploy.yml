@@ -27,6 +27,6 @@ jobs:
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
             - name: Pull code
               run: |
-                  ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+                  ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}
                   cd ${{ secrets.WORK_DIR }}
                   ls -la
