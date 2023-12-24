@@ -1,0 +1,34 @@
+name: CI
+on:
+    workflow_dispatch: # Ability to manually run this workflow from ui.
+    push:
+        branches:
+            - "*"
+
+env:
+    APP_NAME: dockerize-laravel
+
+jobs:
+    deploy_to_production:
+        if: github.ref == 'refs/heads/master' # Here if branch is master only.
+        runs-on: ubuntu-latest
+        needs: [pipelines, publish_to_docker_hub]
+        environment: production
+        concurrency: production # Only one production job runs at any point of time.
+        steps:
+            - name: Echo github context
+              run: echo "$GITHUB_CONTEXT"
+              env:
+                  GITHUB_CONTEXT: ${{ toJson(github) }}
+
+            - name: Deploy using ssh
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USERNAME }}
+                  password: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22 # SSH port.
+                  script: |
+                      cd ~/laravel-docker
+                      git pull origin master                    
+                      docker exec -it dockerize-laravel_app /bin/sh ./scripts/post-deploy.sh
