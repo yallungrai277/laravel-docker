@@ -20,13 +20,13 @@ jobs:
               env:
                   GITHUB_CONTEXT: ${{ toJson(github) }}
 
-            - name: Deploy using ssh
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USERNAME }}
-                  password: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: 22 # SSH port.
-                  script: |
-                      cd ~/laravel-docker
-                      ls -la
+            - name: Install ssh keys
+              run: |
+                  install -m 600 -D /dev/null ~/.ssh/id_rsa
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+            - name: Pull code
+              run: |
+                  ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+                  cd ${{ secrets.WORK_DIR }}
+                  ls -la
