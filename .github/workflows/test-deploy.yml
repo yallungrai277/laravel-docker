@@ -25,7 +25,7 @@ jobs:
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
                   "cd ${{ secrets.WORK_DIR }} && \
                   git pull origin master && \
-                  docker exec -it ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
+                  docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
                   exit"
             - name: Cleanup
               run: rm -rf ~/.ssh
