@@ -15,15 +15,13 @@ jobs:
         environment: production
         concurrency: production # Only one production job runs at any point of time.
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-            - name: Check Workspace Contents
-              run: ls -la $GITHUB_WORKSPACE
             - name: Install ssh keys
               run: |
                   install -m 600 -D /dev/null ~/.ssh/id_rsa
                   echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+            - name: Checkout code to get files needed
+              uses: actions/checkout@v2
             # Transfer only required files as the code has already been pushed bundled up inside the docker hub image.
             - name: Transfer compose and .env.prod file to prod server
               run: |
@@ -34,7 +32,7 @@ jobs:
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
                   "cd ${{ secrets.WORK_DIR }} && \
                   docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }} && \
-                  docker compose pull && \
+                  docker compose -f docker-compose.prod.yml --env-file .env.prod pull && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d && \
                   docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
                   exit"
