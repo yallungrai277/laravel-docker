@@ -20,7 +20,7 @@ jobs:
 
             - name: Set env ci file
               run: mv -f .env.ci .env
-              # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
+              # We set .env.ci as .env so that, php docker build uses .env.ci as the default environment.
 
             # Run prod docker file here ?
             - name: Run docker containers
