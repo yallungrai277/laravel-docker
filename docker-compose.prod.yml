@@ -14,15 +14,29 @@ x-volumes: &default-volumes
     - 'logVolume:/var/www/html/storage/logs' # For persisting log files.
 
 services:
+    # Building without an image
+    # app:
+    #     build:
+    #         context: .
+    #         dockerfile: ./docker/php/Dockerfile.prod
+    #         args:
+    #             PHP_IMAGE: *php
+    #             NODE_IMAGE: *node
+    #     # Save the build artifacts of this image so it can be used by nginx for subsequent builds such as accessing static files, codebase etc.
+    #     image: &app_image ${APP_NAME}_app_image
+    #     container_name: ${APP_NAME}_app
+    #     restart: always
+    #     volumes: *default-volumes
+    #     networks:
+    #         - dockerize-laravel
+    #     depends_on:
+    #         - mysql
+    #         - redis
+
+    # Building with a docker image, may need to docker login beforehand if private repo image.
     app:
-        build:
-            context: .
-            dockerfile: ./docker/php/Dockerfile.prod
-            args:
-                PHP_IMAGE: *php
-                NODE_IMAGE: *node
         # Save the build artifacts of this image so it can be used by nginx for subsequent builds such as accessing static files, codebase etc.
-        image: &app_image ${APP_NAME}_app_image
+        image: &app_image sudiprai277/${APP_NAME}:latest
         container_name: ${APP_NAME}_app
         restart: always
         volumes: *default-volumes
