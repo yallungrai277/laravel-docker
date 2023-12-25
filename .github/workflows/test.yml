@@ -25,13 +25,14 @@ jobs:
             # Transfer only required files as the code has already been pushed bundled up inside the docker hub image.
             - name: Transfer compose and .env.prod file to prod server
               run: |
-                  scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $GITHUB_WORKSPACE/docker-compose.prod.yml $GITHUB_WORKSPACE/.env.prod ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
+                  scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no $GITHUB_WORKSPACE/docker-compose.prod.yml $GITHUB_WORKSPACE/docker $GITHUB_WORKSPACE/.env.prod ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
             # Login to server and deploy.
             - name: Deploy
               run: |
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
                   "cd ${{ secrets.WORK_DIR }} && \
                   docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }} && \
+                  docker compose -f docker-compose.prod.yml --env-file .env.prod pull && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d && \
                   docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
                   exit"
