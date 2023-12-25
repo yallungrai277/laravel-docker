@@ -14,7 +14,7 @@ x-volumes: &default-volumes
     - 'logVolume:/var/www/html/storage/logs' # For persisting log files.
 
 services:
-    # Building without an image
+    # Building container without an image. Use one or the other, See pipelines.yml >> deploy_to_production_without_docker_image for this kind of deployment.
     # app:
     #     build:
     #         context: .
@@ -33,7 +33,8 @@ services:
     #         - mysql
     #         - redis
 
-    # Building with a docker image, may need to docker login beforehand if private repo image.
+    # Building container with a docker image, may need to login to docker before running this compose file if private repo image.
+    # See pipelines.yml >> deploy_to_production_via_dockerhub_image for this king of deployment.
     app:
         # Save the build artifacts of this image so it can be used by nginx for subsequent builds such as accessing static files, codebase etc.
         image: &app_image sudiprai277/${APP_NAME}:latest
