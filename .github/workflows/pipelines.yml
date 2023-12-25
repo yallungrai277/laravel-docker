@@ -1,89 +1,127 @@
-# name: CI
-# on:
-#     workflow_dispatch: # Ability to manually run this workflow from ui.
-#     push:
-#         branches:
-#             - "*"
+name: CI
+on:
+    workflow_dispatch: # Ability to manually run this workflow from ui.
+    push:
+        branches:
+            - "*"
 
-# env:
-#     APP_NAME: dockerize-laravel
+env:
+    APP_NAME: dockerize-laravel
 
-# jobs:
-#     pipelines:
-#         runs-on: ubuntu-latest
-#         steps:
-#             - name: Check out code
-#               uses: actions/checkout@v4
+jobs:
+    pipelines:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
 
-#             - name: Back up .env.prod
-#               run: cp .env.prod .env.prod.bak
+            - name: Back up .env.prod
+              run: cp .env.prod .env.prod.bak
 
-#             - name: Set env ci file
-#               run: mv -f .env.ci .env.prod
-#               # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
+            - name: Set env ci file
+              run: mv -f .env.ci .env.prod
+              # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
 
-#             - name: Run docker containers
-#               run: docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+            - name: Run docker containers
+              run: docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
 
-#             - name: Composer install
-#               run: docker exec -i ${{ env.APP_NAME }}_app composer install # Todo remove this (without this fails in CI, so TODO)
+            - name: Composer install
+              run: docker exec -i ${{ env.APP_NAME }}_app composer install # Todo remove this (without this fails in CI, so TODO)
 
-#             - name: Check coding standards
-#               run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
+            - name: Check coding standards
+              run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
 
-#             - name: Run all php tests
-#               run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
+            - name: Run all php tests
+              run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
 
-#             - name: Shut down containers
-#               run: docker compose -f docker-compose.prod.yml --env-file .env.prod down
+            - name: Shut down containers
+              run: docker compose -f docker-compose.prod.yml --env-file .env.prod down
 
-#             - name: Revert back env files
-#               run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod
+            - name: Revert back env files
+              run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod
 
-#     publish_to_docker_hub:
-#         runs-on: ubuntu-latest
-#         if: github.ref == 'refs/heads/master' # Here if branch is master only we publish to docker hub.
-#         needs: [pipelines]
-#         steps:
-#             - name: Check out code
-#               uses: actions/checkout@v4
+    publish_to_docker_hub:
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/master' # Here if branch is master only we publish to docker hub.
+        needs: [pipelines]
+        steps:
+            - name: Check out code
+              uses: actions/checkout@v4
 
-#             - name: Login to docker hub
-#               uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
-#               with:
-#                   username: ${{ secrets.DOCKERHUB_USERNAME }}
-#                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            - name: Login to docker hub
+              uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-#             - name: Set up Docker Buildx
-#               uses: docker/setup-buildx-action@v3
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
 
-#             - name: Build and push
-#               uses: docker/build-push-action@v5
-#               with:
-#                   context: .
-#                   file: ./Dockerfile
-#                   push: true
-#                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest
+            - name: Build and push
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  file: ./Dockerfile
+                  push: true
+                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest
 
-#     deploy_to_production_without_docker_image:
-#         if: github.ref == 'refs/heads/master' # Here if branch is master only.
-#         runs-on: ubuntu-latest
-#         needs: [pipelines, publish_to_docker_hub]
-#         environment: production
-#         concurrency: production # Only one production job runs at any point of time.
-#         steps:
-#             - name: Install ssh keys
-#               run: |
-#                   install -m 600 -D /dev/null ~/.ssh/id_rsa
-#                   echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-#                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-#             - name: Deploy
-#               run: |
-#                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
-#                   "cd ${{ secrets.WORK_DIR }} && \
-#                   git pull origin master && \
-#                   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build && \
-#                   docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
-#                   exit"
-#             - name: Cleanup
-#               run: rm -rf ~/.ssh
+    # Deploys via github and code present in remote server, without app docker image.
+    # deploy_to_production_without_docker_image:
+    #     if: github.ref == 'refs/heads/master' # Here if branch is master only.
+    #     runs-on: ubuntu-latest
+    #     needs: [pipelines, publish_to_docker_hub]
+    #     environment: production
+    #     concurrency: production # Only one production job runs at any point of time.
+    #     steps:
+    #         - name: Install ssh keys
+    #           run: |
+    #               install -m 600 -D /dev/null ~/.ssh/id_rsa
+    #               echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #               ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+    #         - name: Deploy
+    #           run: |
+    #               ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+    #               "cd ${{ secrets.WORK_DIR }} && \
+    #               git pull origin master && \
+    #               docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build && \
+    #               docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
+    #               exit"
+    #         - name: Cleanup
+    #           run: rm -rf ~/.ssh
+
+    # Deploys via app dockerhub image.
+    deploy_to_production_via_dockerhub_image:
+        if: github.ref == 'refs/heads/master' # Here if branch is master only.
+        runs-on: ubuntu-latest
+        needs: [pipelines, publish_to_docker_hub]
+        environment: production
+        concurrency: production # Only one production job runs at any point of time.
+        steps:
+            - name: Install ssh keys
+              run: |
+                  install -m 600 -D /dev/null ~/.ssh/id_rsa
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+            # Checkout code so that the fies can be transferred in the next step.
+            - name: Checkout code to get files needed
+              uses: actions/checkout@v2
+            # Transfer only required files as the code has already been pushed and bundled up inside the docker hub image.
+            - name: Transfer required files for docker setup
+              run: |
+                  scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r \
+                  $GITHUB_WORKSPACE/docker \
+                  $GITHUB_WORKSPACE/docker-compose.prod.yml \
+                  $GITHUB_WORKSPACE/.env.prod \
+                  ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
+            # Login to server and deploy.
+            - name: Deploy
+              run: |
+                  ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+                  "cd ${{ secrets.WORK_DIR }} && \
+                  docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }} && \
+                  docker compose -f docker-compose.prod.yml --env-file .env.prod pull && \
+                  docker compose -f docker-compose.prod.yml --env-file .env.prod up -d && \
+                  docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
+                  exit"
+            - name: Cleanup
+              run: rm -rf ~/.ssh
