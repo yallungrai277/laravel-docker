@@ -117,11 +117,13 @@ jobs:
                   ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
             # Login to server and deploy.
             - name: Deploy
+              # We also need to build web (nginx service), so the static assets (js/css/images) gets updated from the core image.
               run: |
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
                   "cd ${{ secrets.WORK_DIR }} && \
                   docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }} && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod pull && \
+                  docker compose -f docker-compose.prod.yml --env-file .env.prod build web && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d && \
                   docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
                   exit"
