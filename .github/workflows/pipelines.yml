@@ -67,6 +67,7 @@ jobs:
                   tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest
 
     # Deploys via github and code present in remote server, without app docker image.
+    # Needs remote server to have git with the associated repo initialized.
     # deploy_to_production_without_docker_image:
     #     if: github.ref == 'refs/heads/master' # Here if branch is master only.
     #     runs-on: ubuntu-latest
