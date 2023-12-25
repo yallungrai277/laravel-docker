@@ -106,7 +106,7 @@ jobs:
                   ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
             # Checkout code so that the fies can be transferred in the next step.
             - name: Checkout code to get files needed
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
             # Transfer only required files as the code has already been pushed and bundled up inside the docker hub image.
             - name: Transfer required files for docker setup
               run: |
