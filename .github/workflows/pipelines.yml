@@ -118,6 +118,7 @@ jobs:
             # Login to server and deploy.
             - name: Deploy
               # We also need to build web (nginx service), so the static assets (js/css/images) gets updated from the core image.
+              # We also restart redis container.
               run: |
                   ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
                   "cd ${{ secrets.WORK_DIR }} && \
@@ -125,6 +126,7 @@ jobs:
                   docker compose -f docker-compose.prod.yml --env-file .env.prod pull && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod build web && \
                   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d && \
+                  docker restart ${{ env.APP_NAME}}_redis && \
                   docker exec ${{ env.APP_NAME }}_app /bin/sh ./scripts/post-deploy.sh && \
                   exit"
             - name: Cleanup
