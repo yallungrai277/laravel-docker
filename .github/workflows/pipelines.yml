@@ -15,18 +15,19 @@ jobs:
             - name: Check out code
               uses: actions/checkout@v4
 
-            - name: Back up .env.prod
-              run: cp .env.prod .env.prod.bak
+            - name: Back up .env.ci
+              run: cp .env.ci .env.ci.bak
 
             - name: Set env ci file
-              run: mv -f .env.ci .env.prod
+              run: mv -f .env.ci .env
               # We set .env.ci as prod so that, php docker build automatically replaces the current .env.prod to .env while bringing the production docker file up.
 
+            # Run prod docker file here ?
             - name: Run docker containers
-              run: docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+              run: docker compose up -d
 
             - name: Composer install
-              run: docker exec -i ${{ env.APP_NAME }}_app composer install # Todo remove this (without this fails in CI, so TODO)
+              run: docker exec -i ${{ env.APP_NAME }}_app composer install
 
             - name: Check coding standards
               run: docker exec -i ${{ env.APP_NAME }}_app ./vendor/bin/pint --test
@@ -35,10 +36,10 @@ jobs:
               run: docker exec -i ${{ env.APP_NAME }}_app php artisan test
 
             - name: Shut down containers
-              run: docker compose -f docker-compose.prod.yml --env-file .env.prod down
+              run: docker compose down
 
             - name: Revert back env files
-              run: mv -f .env.prod .env.ci && mv -f .env.prod.bak .env.prod
+              run: rm .env && mv -f .env.ci.bak .env.ci
 
     publish_to_docker_hub:
         runs-on: ubuntu-latest
